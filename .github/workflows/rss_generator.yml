@@ -1,0 +1,32 @@
+name: Generate Daily RSS Feed
+
+on:
+  schedule:
+    - cron: '0 18 * * *'  # Runs daily at 1 PM Central (6 PM UTC)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: python -m pip install --upgrade pip
+
+    - name: Run generate_rss.py
+      run: python generate_rss.py
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+        force: true
